@@ -33,7 +33,7 @@ corrplot(rr1, method = "shade")
 ```
 
 ```{r}
-Year = as.numeric(as.character(r$Year), na.action(r$Year))
+Year <- as.numeric(as.character(r$Year), na.action(r$Year))
 Total <- as.numeric(as.character(r$Total), na.action(r$Total))
 Total.1 <- as.numeric(as.character(r$Total.1), na.action(r$Total.1))
 Male <- as.numeric(as.character(r$Male), na.action(r$Male))
