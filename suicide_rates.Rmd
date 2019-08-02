@@ -84,6 +84,7 @@ lines(density(CPI2), lwd=3, col="brown")
 qqnorm(CPI2)
 abline(a=0, b=1, col='grey')
 ```
+
 ```{r}
 adf.test(CPI)
 ```
@@ -127,6 +128,7 @@ lines(density(UNRATE2), lwd=3, col="red")
 qqnorm(UNRATE2)
 abline(a=0, b=1, col='grey')
 ```
+
 ```{r}
 ```
 
@@ -140,6 +142,7 @@ plot(Year, Total2,
      ylab = "Index",
      main = "Total Suicide Rates (Standardized)")
 ```
+
 ```{r}
 plot(Year, Male2,
      type = "l",
