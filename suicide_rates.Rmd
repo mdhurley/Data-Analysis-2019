@@ -1,0 +1,189 @@
+---
+title: "Suicide Rates"
+author: "Michael Hurley"
+date: "July 30, 2019"
+output: pdf_document
+---
+
+```{r}
+library(tseries)
+library(urca)
+```
+
+
+```{r}
+r = read.csv("C:/Users/Michael/Desktop/Suicide_df.csv", header=T, dec=",")
+r <- as.data.frame(r)
+```
+
+```{r}
+r <- r[-1:-2, ]
+rr <- as.matrix(r[3:11])
+head(rr)
+```
+
+```{r}
+mode(rr) = "numeric"
+data.frame(rr)
+```
+
+```{r}
+rr1 <- cor(rr)
+corrplot(rr1, method = "shade")
+```
+
+```{r}
+Year = as.numeric(as.character(r$Year), na.action(r$Year))
+Total <- as.numeric(as.character(r$Total), na.action(r$Total))
+Total.1 <- as.numeric(as.character(r$Total.1), na.action(r$Total.1))
+Male <- as.numeric(as.character(r$Male), na.action(r$Male))
+Male.1 <- as.numeric(as.character(r$Male.1), na.action(r$Male.1))
+Female <- as.numeric(as.character(r$Female), na.action(r$Female))
+Female.1 <- as.numeric(as.character(r$Female.1), na.action(r$Female.1))
+CPI <- as.numeric(as.character(r$CPI_PCH), na.action(r$CPI_PCH))
+GNDI <- as.numeric(as.character(r$GNDI), na.action(r$GNDI))
+UNRATE <- as.numeric(as.character(r$UNRATE), na.action(r$UNRATE))
+```
+
+```{r}
+# Use z-transformation to standardize values
+
+Female2 <- (Female - mean(Female)) / sd(Female)
+Male2 <- (Male - mean(Male)) / sd(Male)
+Total2 <- (Total - mean(Total)) / sd(Total)
+CPI2 <- (CPI - mean(CPI)) / sd(CPI)
+GNDI2 <- (GNDI - mean(GNDI)) / sd(GNDI)
+UNRATE2 <- (UNRATE - mean(UNRATE)) / sd(UNRATE)
+```
+
+```{r}
+hist(Total2, freq = FALSE)
+lines(density(Total2), lwd=3, col="blue")
+```
+
+```{r}
+qqnorm(Total2)
+abline(a=0, b=1, col='grey')
+```
+
+```{r}
+adf.test(Total)
+```
+
+```{r}
+adf.test(Total2)
+```
+
+
+```{r}
+hist(CPI2, freq = FALSE)
+lines(density(CPI2), lwd=3, col="brown")
+```
+
+```{r}
+qqnorm(CPI2)
+abline(a=0, b=1, col='grey')
+```
+```{r}
+adf.test(CPI)
+```
+
+
+```{r}
+hist(GNDI2, freq = FALSE)
+lines(density(GNDI2), lwd=3, col="blue")
+```
+
+```{r}
+qqnorm(GNDI2)
+abline(a=0, b=1, col='grey')
+```
+```{r}
+adf.test(GNDI)
+```
+
+```{r}
+pp.test(GNDI)
+```
+
+
+```{r}
+kpss.test(GNDI)
+```
+
+
+```{r}
+adf.test(GNDI2)
+```
+
+
+
+```{r}
+hist(UNRATE2, freq = FALSE)
+lines(density(UNRATE2), lwd=3, col="red")
+```
+
+```{r}
+qqnorm(UNRATE2)
+abline(a=0, b=1, col='grey')
+```
+```{r}
+```
+
+
+```{r}
+plot(Year, Total2,
+     type = "l",
+     lty = "solid",
+     lwd = 2,
+     col = "black",
+     ylab = "Index",
+     main = "Total Suicide Rates (Standardized)")
+```
+```{r}
+plot(Year, Male2,
+     type = "l",
+     lty = "solid",
+     lwd = 2,
+     col = "blue",
+     ylab = "Index",
+     main = "Male, & Female Suicide Rates (Standardized)")
+lines(Year, Female2,
+      lty = "dashed",
+      col = "red",
+      lwd = 3)
+legend("topleft", c("Male", "Female"),
+       text.col = c("blue", "red"),
+       cex = 0.8)
+```
+
+```{r}
+plot(Year, Total2,
+     type = "l",
+     lty = "dotted",
+     lwd = 2,
+     ylab = "Index",
+     main = "Total Suicide Rates VS CPI & Unemployment Rate (Standardized)")
+lines(Year, CPI2,
+      lty = "solid",
+      col = "brown",
+      lwd = 2)
+lines(Year, UNRATE2,
+      lty = "solid",
+      col = "red",
+      lwd = 2)
+lines(Year, GNDI2,
+      lty = "solid",
+      col = "blue",
+      lwd = 2)
+legend("topleft", c("Total", "CPI", "UNRATE", "GNDI"),
+       text.col = c("black", "brown", "red", "blue"),
+       cex = 0.8)
+```
+
+```{r}
+# Perform Johansen's Co-Integration longrun test
+jotest <- ca.jo(data.frame(Total2, CPI2, GNDI2, UNRATE2), type = "trace", K=2, spec = "longrun")
+summary(jotest)
+```
+
