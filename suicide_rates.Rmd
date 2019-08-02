@@ -12,7 +12,7 @@ library(urca)
 
 
 ```{r}
-r = read.csv("C:/Users/Michael/Desktop/Suicide_df.csv", header=T, dec=",")
+r <- read.csv("C:/Users/Michael/Desktop/Suicide_df.csv", header=T, dec=",")
 r <- as.data.frame(r)
 ```
 
