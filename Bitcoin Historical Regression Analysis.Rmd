@@ -1,0 +1,215 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(corrplot)
+library(psych)
+library(car)
+```
+
+
+```{r}
+USD=10500000000000 # 10.5 Trillion USD (USA Money in Circulation)
+Bitcoin=21000000   # 21 Million Bitcoin (Most Bitcoin that will be in Circulation)
+Value=USD/Bitcoin  # Value of Bitcoin compared to current dollar
+cat("Value=",Value)
+```
+
+```{r}
+USD=371000000000 # 371 billion (Venezuela GDP in USD)
+Bitcoin=21000000   # 21 Million Bitcoin (Most Bitcoin that will be in Circulation)
+Value=USD/Bitcoin  # Value of Bitcoin compared to the current dollar
+options("scipen" =10)
+cat("Value=",Value)
+```
+
+```{r}
+r = read.csv("C:/Users/Michael/Desktop/bitcoin/Bitcoin.csv", header=T, dec=",")
+```
+
+```{r}
+head(r)
+```
+
+```{r}
+r = as.data.frame(r)
+rr = data.matrix(r[2:5])
+head(rr)
+```
+
+
+```{r}
+y = as.numeric(as.character(r$mkt_Price), na.action(r$mkt_Price))
+describe(y)
+```
+
+```{r}
+summary(y)
+```
+
+```{r}
+sd_y <- sd(y)
+mean_y <- mean(y)
+y1 <- (y-mean_y)/sd_y
+```
+
+
+```{r}
+qqPlot(y)
+```
+
+```{r}
+quantile(y1,probs = seq(0.05,0.95,0.05))
+```
+
+
+```{r}
+qqPlot(y1)
+```
+
+```{r}
+hist(y1)
+```
+
+```{r}
+breaks <- seq(from=min(y),
+              to=max(y), length=11)
+pop_freq <- cut(y, breaks=breaks,
+                right=TRUE, include.lowest = TRUE)
+table(pop_freq)
+```
+
+```{r}
+summary(y)
+```
+
+```{r}
+plot(r$Week, y,
+     main = "Bitcoin Market Price",
+     xlab = "Date",
+     ylab = "Price")
+lines(y, col = 'blue')
+```
+
+
+```{r}
+hist(y, breaks=breaks, col = 'red')
+```
+
+```{r}
+hist(y, freq=FALSE)
+lines(density(y), lwd=3, col="blue")
+```
+
+```{r}
+boxplot(y, ylab="Price")
+```
+
+
+```{r}
+g_Trends = as.numeric(as.character(r$g_Trends), na.action(r$g_Trends))
+summary(g_Trends)
+```
+
+```{r}
+plot(r$Week, g_Trends,
+     main = "Google Trends",
+     xlab = "Date",
+     ylab = "Searches")
+lines(g_Trends, col = 'blue')
+```
+
+
+```{r}
+hist(g_Trends, col = 'red')
+```
+
+```{r}
+hist(g_Trends, freq=FALSE)
+lines(density(g_Trends), lwd=3, col="blue")
+```
+
+```{r}
+boxplot(g_Trends, ylab="Searches")
+```
+
+```{r}
+transactions = as.numeric(as.character(r$transactions), na.action(r$transactions))
+summary(transactions)
+```
+
+```{r}
+plot(r$Week, transactions,
+     main = "Number of Transactions",
+     xlab = "Date",
+     ylab = "Transactions")
+lines(transactions, col = 'blue')
+```
+
+
+```{r}
+hist(transactions, col = 'red')
+```
+
+```{r}
+boxplot(transactions, ylab="Price")
+```
+
+```{r}
+sp = as.numeric(as.character(r$SP500), na.action(r$SP500))
+summary(sp)
+```
+
+```{r}
+plot(r$Week, sp,
+     main = "S&P 500",
+     xlab = "Date",
+     ylab = "Price")
+lines(sp, col = 'blue')
+```
+
+
+```{r}
+hist(sp, col = 'red')
+```
+
+```{r}
+hist(sp, freq=FALSE)
+lines(density(sp), lwd=3, col="blue")
+```
+
+```{r}
+boxplot(sp, ylab="Price")
+```
+
+```{r}
+t.test(sp)
+```
+
+
+## Data Exploration
+```{r}
+rr <- cor(rr)
+corrplot(rr, method = "shade")
+```
+```{r}
+r.lm1 <- lm(y ~ g_Trends + transactions + sp, data = r)
+summary(r.lm1)
+```
+
+```{r}
+r.lm2 <- lm(y ~ g_Trends + sp, data = r)
+summary(r.lm2)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
